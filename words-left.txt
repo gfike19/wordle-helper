@@ -529,7 +529,6 @@
     hilly
     hippo
     hippy
-    hitch
     hoist
     holly
     honey
