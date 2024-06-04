@@ -1,22 +1,20 @@
 import secrets
 # TODO add quit at any time
-# TODO actually remove word from list and rewrite file
 
 def RemoveWord():
     getAnother = "y"
     f = open("words-left.txt", "r+")
     wordsLeft = f.readlines()
-    f.close()
     while getAnother == "y":
-        removeWord = input("Enter word to remove: ")
-        if not [s.lstrip().rstrip() for s in wordsLeft if removeWord in s]:
-            print(wordsLeft.count(removeWord))
+        removeWord = input("Enter word to remove: ") + "\n"
+        if removeWord not in wordsLeft:
             print("Invalid input. Try again.")
         else:
-            wordsLeft.remove(wordsLeft.index(s))
+            wordsLeft.remove(removeWord)
             getAnother = input("Remove another (y/n)? ").lower()
         # how to clear text in file
-        # f.truncate(0)
+    f.truncate(0)
+    f.writelines(wordsLeft)
     MainMenu()
 
 def StarterWord():
