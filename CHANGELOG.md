@@ -10,4 +10,4 @@ resolved issue with finding word in list
 need to add validator for input
 
 ## 7/19/2024
-added quit at anytime functionality, removed all words up until this point, remove word function is working as expected (so far)
+added quit at anytime functionality, removed all words up until this point, remove word function is working as expected (so far). Started work on Guesses function
