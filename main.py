@@ -73,8 +73,8 @@ def Guesses():
         validPos = input(correctPosPhrase).lower
         quitCheck(char)
         userGuess[char] = posDict.get(validPos)
-    f = open("words-left.txt", "r+", encoding='utf-8')    f = open("words-left.txt", "r+", encoding='utf-8')
-    wordsLeft = f.readlines()
+    f = open("words-left.txt", "r+", encoding='utf-8')    
+    # wordsLeft = f.readlines()
     f.close()
 
 
