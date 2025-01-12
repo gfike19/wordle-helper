@@ -41,6 +41,18 @@ def StarterWord():
         getAnother = input("Get another word (y/n)? ").lower()
     MainMenu()
 
+def Guesses():
+    prompt1 = str('Enter letter number %s: ')
+    prompt2 = str('Correct position? (y/n): ')
+    userKnow = {}
+    counter = 1
+
+    while len(userKnow) < 5:
+        key = input(prompt1.format(counter))
+        val = input(prompt2)
+        userKnow.update(key, val)
+    print(userKnow)
+
 def MainMenu():
     mainMenuChoice = int(input('''
     Welcome to Wordle Helper!
