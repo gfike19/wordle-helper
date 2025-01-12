@@ -1,4 +1,9 @@
 import secrets
+<<<<<<< HEAD
+=======
+
+# TODO add quit at any time
+>>>>>>> update-word-list
 
 def RemoveWord():
     validInputList = {"y", "n"}
