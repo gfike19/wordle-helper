@@ -1,9 +1,6 @@
 import secrets
-<<<<<<< HEAD
-=======
 
 # TODO add quit at any time
->>>>>>> update-word-list
 
 def RemoveWord():
     validInputList = {"y", "n"}
@@ -36,13 +33,12 @@ def RemoveWord():
 def StarterWord():
     getAnother = "y"
     while getAnother == "y":
-        f = open("words-left.txt", "r+", encoding="utf-8")
+        f = open("words-left.txt", "r+")
         wordsLeft = f.readlines()
         f.close()
         randomWord = secrets.choice(wordsLeft)
         print(randomWord)
         getAnother = input("Get another word (y/n)? ").lower()
-        quitCheck(getAnother)
     MainMenu()
 
 def MainMenu():
@@ -52,7 +48,7 @@ def MainMenu():
     2) Get possible guesses
     3) Remove word from list of possibles
     4) Exit program
-    Press 'qq' at any time to quit\n>>> '''))
+    Press q at any time to quit\n>>> '''))
 
     if mainMenuChoice == 1:
         StarterWord()
@@ -64,23 +60,7 @@ def MainMenu():
         exit()
 
 def quitCheck(userIput):
-    if userIput.lower() == "qq":
+    if userIput.lower() == "q":
         exit()
-
-def Guesses():
-    correctPosPhrase = "Is the letter in the correct position (y/n)? " 
-    getNextLetterPhrase = "Enter letter number {num}. Leave blank if no letter is known: "
-    userGuess = {}
-    for i in range(1, 6):
-        posDict = {"y": True, "n": False}
-        char = input(str.format(getNextLetterPhrase, i)).lower
-        quitCheck(char)
-        validPos = input(correctPosPhrase).lower
-        quitCheck(char)
-        userGuess[char] = posDict.get(validPos)
-    f = open("words-left.txt", "r+", encoding='utf-8')    
-    # wordsLeft = f.readlines()
-    f.close()
-
 
 MainMenu()
