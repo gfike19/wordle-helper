@@ -1,4 +1,5 @@
 import secrets
+
 # TODO add quit at any time
 
 def RemoveWord():
