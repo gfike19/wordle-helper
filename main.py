@@ -1,6 +1,17 @@
 import secrets
-
+import re
 # TODO add quit at any time
+
+def getWordsLeft():
+    wordsLeft = []
+    f = open('words-left.txt', 'r')
+    lines = f.readlines()
+    f.close()
+    for line in lines:
+        cleanWord = line.split()
+        wordsLeft.append(cleanWord[0])
+    
+    return wordsLeft
 
 def RemoveWord():
     validInputList = {"y", "n"}
@@ -33,9 +44,7 @@ def RemoveWord():
 def StarterWord():
     getAnother = "y"
     while getAnother == "y":
-        f = open("words-left.txt", "r+")
-        wordsLeft = f.readlines()
-        f.close()
+        wordsLeft = getWordsLeft()
         randomWord = secrets.choice(wordsLeft)
         print(randomWord)
         getAnother = input("Get another word (y/n)? ").lower()
@@ -45,13 +54,38 @@ def Guesses():
     prompt1 = str('Enter letter number %s: ')
     prompt2 = str('Correct position? (y/n): ')
     userKnow = {}
-    counter = 1
 
-    while len(userKnow) < 5:
-        key = input(prompt1.format(counter))
+    for i in range(0, 5):
+        key = input(prompt1 %(str(i + 1)))
         val = input(prompt2)
-        userKnow.update(key, val)
-    print(userKnow)
+        userKnow[key] = val
+    
+    usedLetters = input("Enter letters that aren't in the word: ")
+    checkUsed = input('You entered %s.\nIs this correct? (y/n): ' %(usedLetters))
+    if checkUsed.lower == 'y':
+        usedLetters = input("Enter letters that aren't in the word: ")
+    else:
+        counter = 0
+        knownIndex = {}
+        outOfPlace = []
+        for k,v in userKnow:
+            if k != ' ' and v != 'n':
+                knownIndex[counter] = k
+            if k != ' ' and v == 'n':
+                outOfPlace.append[k]
+            else:
+                knownIndex[counter] = '?'
+            counter += 1
+        prefix = "^start"  
+        suffix = "end$"
+        index = []
+        outOfPlace = []
+        for k,v in knownIndex:
+            if v != '?':
+                index.append(k)
+            else:
+                outOfPlace.append(v)
+        index_checks = ''.join(f"(?=.{{{index}}}([{expected_chars}]))" for index in indexes)
 
 def MainMenu():
     mainMenuChoice = int(input('''
@@ -74,5 +108,6 @@ def MainMenu():
 def quitCheck(userIput):
     if userIput.lower() == "q":
         exit()
-
-MainMenu()
+        
+if __name__ == "__main__":
+    MainMenu()
