@@ -1,6 +1,13 @@
 import secrets
 import re
-# TODO add quit at any time
+import string
+import sys
+
+def exit_cli():
+    user_input = input("Do you want to exit? (y/n): ")
+    if user_input.lower() == "y":
+        print("Exiting...")
+        sys.exit()
 
 def getWordsLeft():
     wordsLeft = []
@@ -21,19 +28,17 @@ def RemoveWord():
     getAnother = ""
     while validInput:
         removeWord = input("Enter word to remove: ") + "\n"
-        quitCheck(removeWord)
         if removeWord not in wordsLeft:
             print("Word has already been removed. Try again.")
         else:
             wordsLeft.remove(removeWord)
             print('Word was succesfully removed!')
             getAnother = input("Remove another (y/n)? ").lower()
-            quitCheck(getAnother)
             if getAnother == "n":
                 validInput = False
             elif getAnother not in validInputList:
                 getAnother = input("Invalid input. Type 'y' to try again or 'n' to return to the main menu: ").lower
-                quitCheck(getAnother)
+
             
     # how to clear text in file
     f.truncate(0)
@@ -85,29 +90,43 @@ def Guesses():
                 index.append(k)
             else:
                 outOfPlace.append(v)
-        index_checks = ''.join(f"(?=.{{{index}}}([{expected_chars}]))" for index in indexes)
+        alpha = string.ascii_lowercase
+        remaining = ''
+
+        for each in usedLetters:
+            remaining = alpha.replace(each, '')
+        
+        for each in userKnow.keys:
+            remaining(remaining.replace(each, ''))
+
+        index_checks = ''.join(f"(?=.{{{index}}}([{remaining}]))" for index in indexes)
+        full_pattern = f"{prefix}.*{index_checks}.*{suffix}"
+        wordsLeft = getWordsLeft()
+        guesses = []
+        for each in wordsLeft:
+            match = re.match(full_pattern, each)
+            if match:
+                guesses.append(each)
+        print("The following words are likely options\nPress enter to return to the main menu:\n" *guesses)
 
 def MainMenu():
-    mainMenuChoice = int(input('''
-    Welcome to Wordle Helper!
-    1) Get a starter word
-    2) Get possible guesses
-    3) Remove word from list of possibles
-    4) Exit program
-    Press q at any time to quit\n>>> '''))
+    while True:
+        mainMenuChoice = int(input('''
+        Welcome to Wordle Helper!
+        1) Get a starter word
+        2) Get possible guesses
+        3) Remove word from list of possibles
+        4) Exit program
+        Press q at any time to quit\n>>> '''))
 
-    if mainMenuChoice == 1:
-        StarterWord()
-    if mainMenuChoice == 2:
-        Guesses()
-    if mainMenuChoice == 3:
-        RemoveWord()
-    else:
-        exit()
-
-def quitCheck(userIput):
-    if userIput.lower() == "q":
-        exit()
+        if mainMenuChoice == 'q':
+            exit_cli()
+        if mainMenuChoice == 1:
+            StarterWord()
+        if mainMenuChoice == 2:
+            Guesses()
+        if mainMenuChoice == 3:
+            RemoveWord()
         
 if __name__ == "__main__":
     MainMenu()
