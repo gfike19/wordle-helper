@@ -4,10 +4,8 @@ import string
 import sys
 
 def exit_cli():
-    user_input = input("Do you want to exit? (y/n): ")
-    if user_input.lower() == "y":
-        print("Exiting...")
-        sys.exit()
+    print("Exiting...")
+    sys.exit()
 
 def getWordsLeft():
     wordsLeft = []
@@ -56,76 +54,61 @@ def StarterWord():
     MainMenu()
 
 def Guesses():
-    prompt1 = str('Enter letter number %s: ')
-    prompt2 = str('Correct position? (y/n): ')
+    prompt1 = str('Enter letter number %s\nIf unknown leave blank: ')
+    prompt2 = str('Correct position? (y/n)\nIf unknown leave blank:: ')
     userKnow = {}
+    alpha = string.ascii_lowercase
 
     for i in range(0, 5):
-        key = input(prompt1 %(str(i + 1)))
-        val = input(prompt2)
+        key = input(prompt1 % (str(i + 1)))
+        val = input(prompt2).strip().lower()
         userKnow[key] = val
     
-    usedLetters = input("Enter letters that aren't in the word: ")
-    checkUsed = input('You entered %s.\nIs this correct? (y/n): ' %(usedLetters))
-    if checkUsed.lower == 'y':
-        usedLetters = input("Enter letters that aren't in the word: ")
-    else:
-        counter = 0
-        knownIndex = {}
-        outOfPlace = []
-        for k,v in userKnow:
-            if k != ' ' and v != 'n':
-                knownIndex[counter] = k
-            if k != ' ' and v == 'n':
-                outOfPlace.append[k]
-            else:
-                knownIndex[counter] = '?'
-            counter += 1
-        prefix = "^start"  
-        suffix = "end$"
-        index = []
-        outOfPlace = []
-        for k,v in knownIndex:
-            if v != '?':
-                index.append(k)
-            else:
-                outOfPlace.append(v)
-        alpha = string.ascii_lowercase
-        remaining = ''
+    wordsLeft = getWordsLeft()
+    indexPattern = r''
+    counter = 0
+    usedLetters = ''
+    for k,v in userKnow.items():
+        if v == 'y':
+            indexPattern += '.{' + str(counter) + "}" + k
+            alpha = alpha.replace(k, '')
+    guesses = []
+    usedLetters += input("Enter letters that aren't in the word: ").strip().lower()
+    for each in usedLetters:
+        alpha = alpha.replace(each, '')
+    usedPattern = r'['
 
-        for each in usedLetters:
-            remaining = alpha.replace(each, '')
-        
-        for each in userKnow.keys:
-            remaining(remaining.replace(each, ''))
-
-        index_checks = ''.join(f"(?=.{{{index}}}([{remaining}]))" for index in indexes)
-        full_pattern = f"{prefix}.*{index_checks}.*{suffix}"
-        wordsLeft = getWordsLeft()
-        guesses = []
-        for each in wordsLeft:
-            match = re.match(full_pattern, each)
-            if match:
-                guesses.append(each)
-        print("The following words are likely options\nPress enter to return to the main menu:\n" *guesses)
-
+    for each in wordsLeft:
+        match = re.match(indexPattern, each)
+        if not match:
+            wordsLeft.remove(each)
+    
+    for each in usedLetters:
+        usedPattern += '^' + each
+    usedPattern += ']'
+    for each in wordsLeft:
+        match = re.match(usedPattern, each)
+        guesses.append(each)
+    print(f"Matching words: {guesses}")      
+    MainMenu()
+    
 def MainMenu():
     while True:
-        mainMenuChoice = int(input('''
+        mainMenuChoice = input('''
         Welcome to Wordle Helper!
         1) Get a starter word
         2) Get possible guesses
         3) Remove word from list of possibles
         4) Exit program
-        Press q at any time to quit\n>>> '''))
+        Press q at any time to quit\n>>> ''')
 
         if mainMenuChoice == 'q':
             exit_cli()
-        if mainMenuChoice == 1:
+        if mainMenuChoice == '1':
             StarterWord()
-        if mainMenuChoice == 2:
+        if mainMenuChoice == '2':
             Guesses()
-        if mainMenuChoice == 3:
+        if mainMenuChoice == '3':
             RemoveWord()
         
 if __name__ == "__main__":
