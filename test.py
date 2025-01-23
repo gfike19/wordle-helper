@@ -1,21 +1,17 @@
 import re
 
-# Variable with the value to exclude
-exclude_value = "example"
+# Known letters and positions
+first_letter = "a"
+second_letter = "p"
+fourth_letter = "l"
 
-# Regex pattern to match strings that do NOT contain the value
-pattern = rf"^(?!.*{re.escape(exclude_value)}).*"
+# Variable for the possible characters in unknown positions
+possible_characters = "aeiou"  # Example: vowels
 
-# Test strings
-strings = [
-    "This is an example string.",
-    "This string does not contain the keyword.",
-    "Another example here.",
-    "No matching word."
-]
+# Constructing the regex pattern
+pattern = rf"^{first_letter}{second_letter}[{re.escape(possible_characters)}]{fourth_letter}[{re.escape(possible_characters)}]$"
 
-# Filtering strings that do not contain the exclude_value
-filtered_strings = [s for s in strings if re.match(pattern, s)]
+print("pattern is ", pattern)
 
-print(filtered_strings)
+
 

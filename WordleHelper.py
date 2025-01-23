@@ -57,20 +57,20 @@ def Guesses():
     while True:
         # get what info the user knows about the word presently
         prompt2 = str('Correct position? (y/n)\nIf unknown enter "null": ')
-        posDict = {}
+        rawDict = {}
         alpha = string.ascii_lowercase
         
         for i in range(0, 5, 1):
-            inputStr1 = f'Enter letter number {i}.\nIf unknown enter "null": '
+            inputStr1 = f'Enter letter number {str(i + 1)}.\nIf unknown enter "null": '
             k = input(inputStr1)
             v = input(prompt2)
             if k == 'null':
-                if 'null' not in posDict.keys():
-                    posDict['null' + str(i)] = 'null'
+                if 'null' not in rawDict.keys():
+                    rawDict['null' + str(i)] = 'null'
                 else:
-                    posDict['null'] = 'null'
+                    rawDict['null'] = 'null'
             else:
-                posDict[k] = v
+                rawDict[k] = v
 
         invalidLetters = input('Enter any letters that are NOT in the word: ')
 
@@ -78,27 +78,73 @@ def Guesses():
             alpha = alpha.replace(char, '')
         
         # remove words that contain any of the invalid characters
-        wordsLeft = getWordsLeft
+        wordsLeft = []
+        f = open('all-words.txt', 'r')
+        lines = f.readlines()
+        f.close()
+        for line in lines:
+            words = line.split()
+            for word in words:
+                wordsLeft.append(word.lower())
+
         invalidRegex = rf"^(?!.*[{re.escape(invalidLetters)}]).*"
         guesses = [s for s in wordsLeft if re.match(invalidRegex, s)]
-        # set up variables to create regex to match characters where the index is known and not
-        userKnown = ''
-        posRegex = r''
 
-        for k,v in posDict.items():
-            if v == 'y':
-                posRegex.join(v)
-            elif v == 'null':
-                posRegex.join(('[' + alpha + ']'))
-            elif v == 'n':
-                userKnown += k
-        
-        # check for words that contains letters in wrong index
+        # set up variables to create regex to match characters where the index is known and not
+        first = ""
+        second = ''
+        third = ""
+        fourth = ""
+        fifth = ""
+        i = 1
+        userKnown = ""
+        alpha = '[' + alpha + ']'
+
+        for k,v in rawDict.items():
+            if i == 1:
+                if v == 'y':
+                    first = k
+                else:
+                    first = alpha + ''
+                    if v != "null":
+                        userKnown += k
+            if i == 2:
+                if v == 'y':
+                    second = k
+                else:
+                    second = alpha + ''
+                    if v != 'null':
+                        userKnown += k
+            if i == 3:
+                if v == 'y':
+                    third = k
+                else:
+                    third = alpha + ''
+                    if v != 'null':
+                        userKnown += k
+            if i == 4:
+                if v == 'y':
+                    fourth = k
+                else:
+                    fourth = alpha + ''
+                    if v != 'null':
+                        userKnown += k
+            if i == 5:
+                if v == 'y':
+                    fifth = k
+                else:
+                    if v != 'null':
+                        userKnown += k
+            i += 1
+
+        posRegex = rf'^{first}{second}{third}{fourth}{fifth}$'
+        guessesCopy = guesses.copy()
+        guesses = [s for s in guessesCopy if re.match(posRegex, s)]
+        print("current guesses are: ", guesses)
         userKnownRegex = rf"^(?=.*[{re.escape(userKnown)}]).*"
-        guesses = [s for s in guesses if re.match(userKnownRegex, s)]
-        
-        # finally check for words that match the index/es the user knows
-        guesses = [s for s in guesses if re.match(posRegex, s)]
+        print("userKnownRegex is: ", userKnownRegex)
+        guessesCopy = guesses.copy()
+        guesses = [s for s in guessesCopy if re.match(userKnownRegex, s)]
         print("Guesses are: ", guesses)
         repeat = input('Repeat? (y/n): ')
         
