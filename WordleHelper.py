@@ -54,42 +54,57 @@ def StarterWord():
     MainMenu()
 
 def Guesses():
-    prompt1 = str('Enter letter number %s\nIf unknown leave blank: ')
-    prompt2 = str('Correct position? (y/n)\nIf unknown leave blank:: ')
-    userKnow = {}
-    alpha = string.ascii_lowercase
+    while True:
+        # get what info the user knows about the word presently
+        prompt2 = str('Correct position? (y/n)\nIf unknown enter "null": ')
+        posDict = {}
+        alpha = string.ascii_lowercase
+        
+        for i in range(0, 5, 1):
+            inputStr1 = f'Enter letter number {i}.\nIf unknown enter "null": '
+            k = input(inputStr1)
+            v = input(prompt2)
+            if k == 'null':
+                if 'null' not in posDict.keys():
+                    posDict['null' + str(i)] = 'null'
+                else:
+                    posDict['null'] = 'null'
+            else:
+                posDict[k] = v
 
-    for i in range(0, 5):
-        key = input(prompt1 % (str(i + 1)))
-        val = input(prompt2).strip().lower()
-        userKnow[key] = val
-    
-    wordsLeft = getWordsLeft()
-    indexPattern = r''
-    counter = 0
-    usedLetters = ''
-    for k,v in userKnow.items():
-        if v == 'y':
-            indexPattern += '.{' + str(counter) + "}" + k
-            alpha = alpha.replace(k, '')
-    guesses = []
-    usedLetters += input("Enter letters that aren't in the word: ").strip().lower()
-    for each in usedLetters:
-        alpha = alpha.replace(each, '')
-    usedPattern = r'['
+        invalidLetters = input('Enter any letters that are NOT in the word: ')
 
-    for each in wordsLeft:
-        match = re.match(indexPattern, each)
-        if not match:
-            wordsLeft.remove(each)
+        for char in invalidLetters:
+            alpha = alpha.replace(char, '')
+        
+        # remove words that contain any of the invalid characters
+        wordsLeft = getWordsLeft
+        invalidRegex = rf"^(?!.*[{re.escape(invalidLetters)}]).*"
+        guesses = [s for s in wordsLeft if re.match(invalidRegex, s)]
+        # set up variables to create regex to match characters where the index is known and not
+        userKnown = ''
+        posRegex = r''
+
+        for k,v in posDict.items():
+            if v == 'y':
+                posRegex.join(v)
+            elif v == 'null':
+                posRegex.join(('[' + alpha + ']'))
+            elif v == 'n':
+                userKnown += k
+        
+        # check for words that contains letters in wrong index
+        userKnownRegex = rf"^(?=.*[{re.escape(userKnown)}]).*"
+        guesses = [s for s in guesses if re.match(userKnownRegex, s)]
+        
+        # finally check for words that match the index/es the user knows
+        guesses = [s for s in guesses if re.match(posRegex, s)]
+        print("Guesses are: ", guesses)
+        repeat = input('Repeat? (y/n): ')
+        
+        if repeat == 'n':
+            break
     
-    for each in usedLetters:
-        usedPattern += '^' + each
-    usedPattern += ']'
-    for each in wordsLeft:
-        match = re.match(usedPattern, each)
-        guesses.append(each)
-    print(f"Matching words: {guesses}")      
     MainMenu()
     
 def MainMenu():
