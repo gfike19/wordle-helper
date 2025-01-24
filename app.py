@@ -19,30 +19,27 @@ def getWordsLeft():
     return wordsLeft
 
 def RemoveWord():
-    validInputList = {"y", "n"}
     f = open("words-left.txt", "r+", encoding='utf-8')
     wordsLeft = f.readlines()
-    validInput = True
     getAnother = ""
-    while validInput:
+    while True:
         removeWord = input("Enter word to remove: ") + "\n"
         if removeWord not in wordsLeft:
             print("Word has already been removed. Try again.")
         else:
             wordsLeft.remove(removeWord)
             print('Word was succesfully removed!')
+            # how to clear text in file
+            f.truncate(0)
+            f.writelines(wordsLeft)
+            f.close()
             getAnother = input("Remove another (y/n)? ").lower()
             if getAnother == "n":
-                validInput = False
-            elif getAnother not in validInputList:
+                break
+            elif len(getAnother) > 1:
                 getAnother = input("Invalid input. Type 'y' to try again or 'n' to return to the main menu: ").lower
-
-            
-    # how to clear text in file
-    f.truncate(0)
-    f.writelines(wordsLeft)
-    f.close()
-    MainMenu()
+            elif getAnother == 'q':
+                MainMenu
 
 def StarterWord():
     getAnother = "y"
@@ -63,7 +60,8 @@ def Guesses():
         for i in range(0, 5, 1):
             inputStr1 = f'Enter letter number {str(i + 1)}.\nIf unknown enter "null": '
             k = input(inputStr1)
-            v = input(prompt2)
+            if k != 'null':
+                v = input(prompt2)
             if k == 'null':
                 if 'null' not in rawDict.keys():
                     rawDict['null' + str(i)] = 'null'
@@ -78,73 +76,84 @@ def Guesses():
             alpha = alpha.replace(char, '')
         
         # remove words that contain any of the invalid characters
+        wordbankChoice = input('This the latest word or an old one? (1,2): ')
         wordsLeft = []
-        f = open('all-words.txt', 'r')
-        lines = f.readlines()
+        f = ''
+        
+        if wordbankChoice == 2: 
+            f = open('all-words.txt', 'r')
+            lines = f.readlines()
+            for line in lines:
+                words = line.split()
+                for word in words:
+                    wordsLeft.append(word.lower())
+        elif wordbankChoice == 1:
+            f = open('words-left.txt', 'r')
+            wordsLeft = f.readlines()
+        
         f.close()
-        for line in lines:
-            words = line.split()
-            for word in words:
-                wordsLeft.append(word.lower())
-
         invalidRegex = rf"^(?!.*[{re.escape(invalidLetters)}]).*"
         guesses = [s for s in wordsLeft if re.match(invalidRegex, s)]
 
         # set up variables to create regex to match characters where the index is known and not
-        first = ""
-        second = ''
-        third = ""
-        fourth = ""
-        fifth = ""
+        first = "" + alpha
+        second = '' + alpha
+        third = "" + alpha
+        fourth = "" + alpha
+        fifth = "" + alpha
         i = 1
-        userKnown = ""
-        alpha = '[' + alpha + ']'
-
+        isPresent = ''
         for k,v in rawDict.items():
             if i == 1:
                 if v == 'y':
                     first = k
-                else:
-                    first = alpha + ''
-                    if v != "null":
-                        userKnown += k
+                elif v == 'n':
+                    first = first.replace(k, '')
+                    isPresent += k
             if i == 2:
                 if v == 'y':
                     second = k
-                else:
-                    second = alpha + ''
-                    if v != 'null':
-                        userKnown += k
+                elif v == 'n':
+                    second = second.replace(k, '')
+                    isPresent += k
             if i == 3:
                 if v == 'y':
                     third = k
-                else:
-                    third = alpha + ''
-                    if v != 'null':
-                        userKnown += k
+                elif v == 'n':
+                    third = third.replace(k, "")
+                    isPresent += k
             if i == 4:
                 if v == 'y':
                     fourth = k
-                else:
-                    fourth = alpha + ''
-                    if v != 'null':
-                        userKnown += k
+                elif v == 'n':
+                    fourth = fourth.replace(k, '')
+                    isPresent += k
             if i == 5:
                 if v == 'y':
                     fifth = k
-                else:
-                    if v != 'null':
-                        userKnown += k
+                elif v == 'n':
+                    fifth = fifth.replace(k, '')
+                    isPresent += k
             i += 1
 
-        posRegex = rf'^{first}{second}{third}{fourth}{fifth}$'
+        if len(isPresent) > 1:
+            isPresentRegex = rf"^(?=.*[{re.escape(isPresent)}]).*"
+            guessesCopy = guesses.copy()
+            guesses = [s for s in guessesCopy if re.match(isPresentRegex, s)]
+        if len(first) > 1:
+            first = f'[{first}]'
+        if len(second) > 1:
+            second = f'[{second}]'
+        if len(third) > 1:
+            third = f'[{third}]'
+        if len(fourth) > 1:
+            fourth = f'[{fourth}]'
+        if len(fifth) > 1:
+            fifth = f'[{fifth}]'
+        posRegex = rf"^{first}{second}{third}{fourth}{fifth}$"
+        print("user known regex is:", posRegex)
         guessesCopy = guesses.copy()
         guesses = [s for s in guessesCopy if re.match(posRegex, s)]
-        print("current guesses are: ", guesses)
-        userKnownRegex = rf"^(?=.*[{re.escape(userKnown)}]).*"
-        print("userKnownRegex is: ", userKnownRegex)
-        guessesCopy = guesses.copy()
-        guesses = [s for s in guessesCopy if re.match(userKnownRegex, s)]
         print("Guesses are: ", guesses)
         repeat = input('Repeat? (y/n): ')
         
