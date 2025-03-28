@@ -76,20 +76,12 @@ def Guesses():
             alpha = alpha.replace(char, '')
         
         # remove words that contain any of the invalid characters
-        wordbankChoice = input('This the latest word or an old one? (1,2): ')
+    
         wordsLeft = []
         f = ''
         
-        if wordbankChoice == 2: 
-            f = open('all-words.txt', 'r')
-            lines = f.readlines()
-            for line in lines:
-                words = line.split()
-                for word in words:
-                    wordsLeft.append(word.lower())
-        elif wordbankChoice == 1:
-            f = open('words-left.txt', 'r')
-            wordsLeft = f.readlines()
+        f = open('words-left.txt', 'r')
+        wordsLeft = f.readlines()
         
         f.close()
         invalidRegex = rf"^(?!.*[{re.escape(invalidLetters)}]).*"
@@ -151,9 +143,8 @@ def Guesses():
         if len(fifth) > 1:
             fifth = f'[{fifth}]'
         posRegex = rf"^{first}{second}{third}{fourth}{fifth}$"
-        print("user known regex is:", posRegex)
         guessesCopy = guesses.copy()
-        guesses = [s for s in guessesCopy if re.match(posRegex, s)]
+        guesses = [s.strip() for s in guessesCopy if re.match(posRegex, s)]
         print("Guesses are: ", guesses)
         repeat = input('Repeat? (y/n): ')
         
