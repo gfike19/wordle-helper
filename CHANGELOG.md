@@ -1,7 +1,8 @@
 #   CHANGELOG
 
 ## 3/28/2025
-Guesses function almost done, returned words that did NOT contain all characters that user identified are in word
+- Guesses function almost done, returned words that did NOT contain all characters that user identified are in word
+- started on db creation, can add all words to db, started work on getting dates from site of when words were used
 
 ## 7/19/2024
 added quit at anytime functionality, removed all words up until this point, remove word function is working as expected (so far). Started work on Guesses function
