@@ -2,6 +2,7 @@
 
 ## 3/29/2025
 - able to pull table rows with date of word used and word itself
+- created regex to format id, word, and date from table row
 
 ## 3/28/2025
 - Guesses function almost done, returned words that did NOT contain all characters that user identified are in word
