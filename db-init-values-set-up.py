@@ -19,12 +19,8 @@ from bs4 import BeautifulSoup
 url = "https://beebom.com/past-wordle-answers/"
 # response = requests.get(url)
 html = requests.get(url)
-print(html)
-soup = BeautifulSoup(requests.Response.text, 'html.parser')
-tbody = soup.find('tbody')
-table_rows = []
-counter = 0
-temp = []
+soup = BeautifulSoup(html.text, "html.parser")
+table_rows = soup.find_all('tr')
 
     # print(temp.append(tr.getText))
     # counter += 1
