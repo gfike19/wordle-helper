@@ -3,7 +3,7 @@
 ## 3/29/2025
 - able to pull table rows with date of word used and word itself
 - created regex to format id, word, and date from table row
-
+- updated Word model with date used column, can get values for used words (num, date) but need to work on formatting date so it can be inserted into db
 ## 3/28/2025
 - Guesses function almost done, returned words that did NOT contain all characters that user identified are in word
 - started on db creation, can add all words to db, started work on getting dates from site of when words were used
