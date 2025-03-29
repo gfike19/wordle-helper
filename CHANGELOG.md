@@ -1,8 +1,25 @@
 #   CHANGELOG
 
+## 3/29/2025
+- 
+
 ## 3/28/2025
 - Guesses function almost done, returned words that did NOT contain all characters that user identified are in word
 - started on db creation, can add all words to db, started work on getting dates from site of when words were used
+
+## 1/24/2025
+guess func working as expected, tried tweaking remove word func to make it easier to quit ran into issues, need to troubleshoot
+
+## 1/15/2025
+finally able to get guesses but got too many, going to have ChatGPT troubleshoot
+
+## 1/12/2025
+- updated words left and removed copy of it
+- started work on guesses function
+
+## 1/11/2025
+- added update used words list
+- created file and function to remove used words from wevsite
 
 ## 7/19/2024
 added quit at anytime functionality, removed all words up until this point, remove word function is working as expected (so far). Started work on Guesses function

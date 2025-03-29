@@ -1,4 +1,3 @@
-from urllib import response
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import Word
@@ -17,11 +16,21 @@ from bs4 import BeautifulSoup
 
 # f.close()
 
-url = 'https://wordsrated.com/tools/wordsfinder/past-wordle-answers/' 
-response = requests.get(url)
-soup = BeautifulSoup(response.text, 'html.parser')
-wordle_items = soup.find('div', class_="wordle-solutions-container")
-print(wordle_items)
+url = "https://beebom.com/past-wordle-answers/"
+# response = requests.get(url)
+html = requests.get(url)
+print(html)
+soup = BeautifulSoup(requests.Response.text, 'html.parser')
+tbody = soup.find('tbody')
+table_rows = []
+counter = 0
+temp = []
+
+    # print(temp.append(tr.getText))
+    # counter += 1
+    # if counter == 3:
+    #     temp = []
+    #     counter = 0
 # Word.Base.metadata.create_all(engine)
 # Session = sessionmaker(bind=engine)
 # session = Session()
