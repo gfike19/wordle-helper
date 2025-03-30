@@ -30,6 +30,7 @@ for i in range(1, len(table_rows)):
     match = re.match(tr_regex, row)
     if match:
         number, date, word = match.groups()
+        print(date)
         row_list.append({word : (number, date)})
         used_words.append(word)
 
@@ -44,8 +45,14 @@ for each in all_words:
         dit = row_list[index]
         num = dit[each][0]
         date_str = dit[each][1]
-        date = datetime.strptime(date_str, '%y/%m/%d')
+        try:
+            date = datetime.strptime(date_str, '%B %d, %Y')
+        except (ValueError):
+            print("Date string: " + date_str + "invalid")
+            print("Wordle number is", num)
+            new_word = Word.Word(word_val=each, wordle_num=num)
         new_word = Word.Word(word_val=each, wordle_num=num,date_used=date)
+        
     else:
         new_word = Word.Word(word_val=each)
     session.add(new_word)

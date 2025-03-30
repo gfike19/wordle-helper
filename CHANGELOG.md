@@ -1,5 +1,7 @@
 #   CHANGELOG
 
+## 3/20/2025
+- updated db init script, works to scrape used values from site and upload to db. Need to watch out for improper date formats though
 ## 3/29/2025
 - able to pull table rows with date of word used and word itself
 - created regex to format id, word, and date from table row
