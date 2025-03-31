@@ -7,6 +7,9 @@ from sqlalchemy.orm import sessionmaker
 import datetime
 from Word import Word
 
+wordsLeft = []
+usedWords = []
+
 def exit_cli():
     print("Exiting...")
     sys.exit()
@@ -20,6 +23,10 @@ def startDb():
 def getwordsLeftToday(session):
     results = session.query(Word).filter(Word.date_used.is_(None)).all()
     return results
+
+def findWordleByNum(num, session):
+    # TODO fill in regex expression
+    results = session.query(Word).filter(Word.wordle_num.regexp_match()).all()
 
 def getWordsLeft():
     wordsLeft = []
@@ -58,13 +65,18 @@ def RemoveWord():
 def StarterWord():
     getAnother = "y"
     randomWord = ''
+    session = startDb()
     while getAnother == "y":
         wordleVer = int(input("Working on today's Wordle (1) or a different one (2)?"))
         if wordleVer == 1:
-            session = startDb()
             wordsLeft = getwordsLeftToday(session)
             session.close()
             randomWord = secrets.choice(wordsLeft)
+        if wordleVer == 2:
+            wordleId = input("Indicate if you are entering the number (n) or the date (d): ")
+            if wordleId == 'n':
+                wordleNum = int(input("Enter the Wordle number: "))
+
         print(randomWord.word_val)
         getAnother = input("Get another word (y/n)? ").lower()
     MainMenu()
@@ -99,12 +111,14 @@ def Guesses():
         wordsLeft = []
         f = ''
         
-        f = open('words-left.txt', 'r')
-        wordsLeft = f.readlines()
+        # f = open('words-left.txt', 'r')
+        session = startDb()
+        wordsLeft = getwordsLeftToday(session)
+        session.close()
         
-        f.close()
+        # f.close()
         invalidRegex = rf"^(?!.*[{re.escape(invalidLetters)}]).*"
-        guesses = [s for s in wordsLeft if re.match(invalidRegex, s)]
+        guesses = [s for s in wordsLeft if re.match(invalidRegex, s.word_val)]
 
         # set up variables to create regex to match characters where the index is known and not
         first = "" + alpha
@@ -114,6 +128,8 @@ def Guesses():
         fifth = "" + alpha
         i = 1
         isPresent = ''
+        # letters that are for certain in Wordle
+        required = []
         for k,v in rawDict.items():
             if i == 1:
                 if v == 'y':
@@ -150,21 +166,38 @@ def Guesses():
         if len(isPresent) > 1:
             isPresentRegex = rf"^(?=.*[{re.escape(isPresent)}]).*"
             guessesCopy = guesses.copy()
-            guesses = [s for s in guessesCopy if re.match(isPresentRegex, s)]
+            guesses = [s for s in guessesCopy if re.match(isPresentRegex, s.word_val)]
         if len(first) > 1:
             first = f'[{first}]'
+        else:
+            required.append(first)
         if len(second) > 1:
             second = f'[{second}]'
+        else:
+            required.append(second)
         if len(third) > 1:
             third = f'[{third}]'
+        else:
+            required.append(third)
         if len(fourth) > 1:
             fourth = f'[{fourth}]'
+        else:
+            required.append(fourth)
         if len(fifth) > 1:
             fifth = f'[{fifth}]'
+        else:
+            required.append(fifth)
         posRegex = rf"^{first}{second}{third}{fourth}{fifth}$"
         guessesCopy = guesses.copy()
-        guesses = [s.strip() for s in guessesCopy if re.match(posRegex, s)]
-        print("Guesses are: ", guesses)
+        guesses = [s for s in guessesCopy if re.match(posRegex, s.word_val)]
+        just_text = []
+        for g in guesses:
+            just_text.append(g.word_val)
+        # for each in guesses:
+        #     for letter in required:
+        #         if letter not in each:
+        #             guesses.remove(each)
+        print("Guesses are: ", just_text)
         repeat = input('Repeat? (y/n): ')
         
         if repeat == 'n':
