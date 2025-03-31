@@ -2,10 +2,24 @@ import secrets
 import re
 import string
 import sys
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+import datetime
+from Word import Word
 
 def exit_cli():
     print("Exiting...")
     sys.exit()
+
+def startDb():
+    engine = create_engine('postgresql+psycopg2://postgres:password@localhost/wordle-helper', echo=False)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    return session
+
+def getwordsLeftToday(session):
+    results = session.query(Word).filter(Word.date_used.is_(None)).all()
+    return results
 
 def getWordsLeft():
     wordsLeft = []
@@ -43,10 +57,15 @@ def RemoveWord():
 
 def StarterWord():
     getAnother = "y"
+    randomWord = ''
     while getAnother == "y":
-        wordsLeft = getWordsLeft()
-        randomWord = secrets.choice(wordsLeft)
-        print(randomWord)
+        wordleVer = int(input("Working on today's Wordle (1) or a different one (2)?"))
+        if wordleVer == 1:
+            session = startDb()
+            wordsLeft = getwordsLeftToday(session)
+            session.close()
+            randomWord = secrets.choice(wordsLeft)
+        print(randomWord.word_val)
         getAnother = input("Get another word (y/n)? ").lower()
     MainMenu()
 
